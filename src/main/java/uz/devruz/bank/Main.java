@@ -17,5 +17,15 @@ public class Main {
         } catch (IllegalArgumentException e) {
             System.out.println("Rejected: " + e.getMessage());
         }
+
+        Account friend = new Account(2, "Jonibek");
+        account.transferTo(friend, new BigDecimal("100"));
+        System.out.println("My balance: " + account.getBalance());
+        System.out.println("Friend balance: " + friend.getBalance());
+        try {
+            account.transferTo(friend, new BigDecimal("99999"));
+        } catch(IllegalArgumentException e) {
+            System.out.println("Friend balance after failed transfer: " + friend.getBalance());
+        }
     }
 }
