@@ -44,6 +44,14 @@ class AccountTest {
             assertEquals("Deposit amount must be positive", e.getMessage());
             assertEquals(0, account.getBalance().compareTo(BigDecimal.ZERO));
         }
+
+        @Test
+        void rejectsNullAmount() {
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                    () -> account.deposit(null));
+            assertEquals("Deposit amount must not be null", e.getMessage());
+            assertEquals(0, account.getBalance().compareTo(BigDecimal.ZERO));
+        }
     }
 
     @Nested
@@ -72,6 +80,14 @@ class AccountTest {
             IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
                     () -> account.withdraw(new BigDecimal(amount)));
             assertEquals("Withdraw amount must be positive", e.getMessage());
+            assertEquals(new BigDecimal("500.00"), account.getBalance());
+        }
+
+        @Test
+        void rejectsNullAmount() {
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                    () -> account.withdraw(null));
+            assertEquals("Withdraw amount must not be null", e.getMessage());
             assertEquals(new BigDecimal("500.00"), account.getBalance());
         }
 
@@ -122,6 +138,14 @@ class AccountTest {
         void insufficientFundsLeavesBothBalancesUnchanged() {
             assertThrows(IllegalArgumentException.class,
                     () -> account.transferTo(friend, new BigDecimal("99999")));
+            assertEquals(new BigDecimal("500.00"), account.getBalance());
+            assertEquals(0, friend.getBalance().compareTo(BigDecimal.ZERO));
+        }
+
+        @Test
+        void nullAmountLeavesBothBalancesUnchanged() {
+            assertThrows(IllegalArgumentException.class,
+                    () -> account.transferTo(friend, null));
             assertEquals(new BigDecimal("500.00"), account.getBalance());
             assertEquals(0, friend.getBalance().compareTo(BigDecimal.ZERO));
         }
