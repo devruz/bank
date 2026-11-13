@@ -1,5 +1,9 @@
 package uz.devruz.bank.account;
+
+import uz.devruz.bank.exception.InsufficientFundsException;
+
 import java.math.BigDecimal;
+
 public class Account {
     private final long id;
     private final String ownerName;
@@ -40,7 +44,7 @@ public class Account {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Withdraw amount must be positive");
         } else if (amount.compareTo(balance) > 0) {
-            throw new IllegalArgumentException("Insufficient funds");
+            throw new InsufficientFundsException(balance, amount);
         }
         balance = balance.subtract(amount);
     }

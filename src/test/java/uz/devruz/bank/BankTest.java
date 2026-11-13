@@ -7,6 +7,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import uz.devruz.bank.account.Account;
+import uz.devruz.bank.exception.AccountNotFoundException;
+import uz.devruz.bank.exception.InsufficientFundsException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -103,15 +105,16 @@ class BankTest {
 
         @Test
         void rejectsUnknownSourceAccount() {
-            IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+            AccountNotFoundException e = assertThrows(AccountNotFoundException.class,
                     () -> bank.transfer(99, to.getId(), new BigDecimal("100")));
             assertEquals("Account not found: 99", e.getMessage());
+            assertEquals(99, e.getAccountId());
             assertEquals(0, to.getBalance().compareTo(BigDecimal.ZERO));
         }
 
         @Test
         void rejectsUnknownTargetAccountWithoutWithdrawing() {
-            IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+            AccountNotFoundException e = assertThrows(AccountNotFoundException.class,
                     () -> bank.transfer(from.getId(), 99, new BigDecimal("100")));
             assertEquals("Account not found: 99", e.getMessage());
             assertEquals(new BigDecimal("500.00"), from.getBalance());
@@ -126,7 +129,7 @@ class BankTest {
 
         @Test
         void insufficientFundsLeavesBothBalancesUnchanged() {
-            assertThrows(IllegalArgumentException.class,
+            assertThrows(InsufficientFundsException.class,
                     () -> bank.transfer(from.getId(), to.getId(), new BigDecimal("99999")));
             assertEquals(new BigDecimal("500.00"), from.getBalance());
             assertEquals(0, to.getBalance().compareTo(BigDecimal.ZERO));

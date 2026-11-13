@@ -1,6 +1,8 @@
 package uz.devruz.bank;
 
 import uz.devruz.bank.account.Account;
+import uz.devruz.bank.exception.InsufficientFundsException;
+
 import java.math.BigDecimal;
 
 public class Main {
@@ -14,7 +16,7 @@ public class Main {
 
         try {
             account.withdraw(new BigDecimal("10000"));
-        } catch (IllegalArgumentException e) {
+        } catch (InsufficientFundsException e) {
             System.out.println("Rejected: " + e.getMessage());
         }
 
@@ -24,7 +26,7 @@ public class Main {
         System.out.println("Friend balance: " + friend.getBalance());
         try {
             account.transferTo(friend, new BigDecimal("99999"));
-        } catch(IllegalArgumentException e) {
+        } catch (InsufficientFundsException e) {
             System.out.println("Friend balance after failed transfer: " + friend.getBalance());
         }
     }

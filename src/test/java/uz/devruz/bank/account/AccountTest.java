@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import uz.devruz.bank.exception.InsufficientFundsException;
 
 import java.math.BigDecimal;
 
@@ -93,9 +94,11 @@ class AccountTest {
 
         @Test
         void rejectsAmountGreaterThanBalance() {
-            IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+            InsufficientFundsException e = assertThrows(InsufficientFundsException.class,
                     () -> account.withdraw(new BigDecimal("500.01")));
-            assertEquals("Insufficient funds", e.getMessage());
+            assertEquals("Insufficient funds: balance 500.00, requested 500.01", e.getMessage());
+            assertEquals(new BigDecimal("500.00"), e.getBalance());
+            assertEquals(new BigDecimal("500.01"), e.getRequested());
             assertEquals(new BigDecimal("500.00"), account.getBalance());
         }
     }
@@ -136,7 +139,7 @@ class AccountTest {
 
         @Test
         void insufficientFundsLeavesBothBalancesUnchanged() {
-            assertThrows(IllegalArgumentException.class,
+            assertThrows(InsufficientFundsException.class,
                     () -> account.transferTo(friend, new BigDecimal("99999")));
             assertEquals(new BigDecimal("500.00"), account.getBalance());
             assertEquals(0, friend.getBalance().compareTo(BigDecimal.ZERO));

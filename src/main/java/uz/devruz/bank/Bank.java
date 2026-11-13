@@ -1,6 +1,7 @@
 package uz.devruz.bank;
 
 import uz.devruz.bank.account.Account;
+import uz.devruz.bank.exception.AccountNotFoundException;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -37,6 +38,6 @@ public class Bank {
 
     private Account getAccountOrThrow(long id) {
         return findAccount(id)
-                .orElseThrow(() -> new IllegalArgumentException("Account not found: " + id));
+                .orElseThrow(() -> new AccountNotFoundException(id));
     }
 }
